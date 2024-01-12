@@ -8,7 +8,28 @@ if [ -z ${DRINODE+x} ]; then
   DRINODE="/dev/dri/renderD128"
 fi
 
-exec s6-setuidgid abc \
+if [ -f /opt/VirtualGL/bin/vglrun ] && \
+   [ ! -z "${KASM_EGL_CARD}" ] && [ ! -z "${KASM_RENDERD}" ] && \
+   [ -r "${KASM_EGL_CARD}" ] && [ -r "${KASM_RENDERD}" ] && \
+   [ -w "${KASM_EGL_CARD}" ] && [ -w "${KASM_RENDERD}" ]; then
+  exec s6-setuidgid abc \
+  /opt/VirtualGL/bin/vglrun -d "${KASM_EGL_CARD}" \
+  /usr/local/bin/Xvnc $DISPLAY \
+    -PublicIP 127.0.0.1 \
+    -drinode ${DRINODE} \
+    -disableBasicAuth \
+    -SecurityTypes None \
+    -AlwaysShared \
+    -http-header Cross-Origin-Embedder-Policy=require-corp \
+    -http-header Cross-Origin-Opener-Policy=same-origin \
+    -geometry 1024x768 \
+    -sslOnly 0 \
+    -RectThreads 0 \
+    -websocketPort 6901 \
+    -interface 0.0.0.0 \
+    -Log *:stdout:10
+else
+  exec s6-setuidgid abc \
   /usr/local/bin/Xvnc $DISPLAY \
     ${HW3D} \
     -PublicIP 127.0.0.1 \
@@ -24,3 +45,4 @@ exec s6-setuidgid abc \
     -websocketPort 6901 \
     -interface 0.0.0.0 \
     -Log *:stdout:10
+fi

@@ -197,7 +197,7 @@ RUN \
     libpulse-dev \
     make \
     nodejs
-	
+
 RUN \
   echo "**** grab source ****" && \
   mkdir -p /kclient && \
@@ -274,12 +274,17 @@ RUN \
     fuse-overlayfs \
     intel-media-va-driver \
     libdatetime-perl \
+    libegl1 \
     libfontenc1 \
     libfreetype6 \
     libgbm1 \
     libgcrypt20 \
+    libgl1 \
     libgl1-mesa-dri \
+    libgles2 \
     libglu1-mesa \
+    libglvnd0 \
+    libglx0 \
     libgnutls30 \
     libgomp1 \
     libhash-merge-simple-perl \
@@ -378,6 +383,11 @@ RUN \
   chmod +x /kasmbins/* && \
   chown -R 1000:1000 /kasmbins && \
   chown 1000:1000 /usr/share/kasmvnc/www/Downloads && \
+  echo "**** install virtualgl ****" && \
+  curl -o \
+  /tmp/virtualgl_3.1_amd64.deb -L \
+    https://github.com/VirtualGL/virtualgl/releases/download/3.1/virtualgl_3.1_amd64.deb && \
+  dpkg -i /tmp/virtualgl_3.1_amd64.deb && \
   echo "**** dind support ****" && \
   useradd -U dockremap && \
   usermod -G dockremap dockremap && \
